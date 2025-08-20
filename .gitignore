@@ -47,10 +47,13 @@ test-output/
 reports/
 screenshots/
 logs/
-*.html
-*.xml
 allure-results/
 extent-reports/
+
+# Keep important XML files
+!pom.xml
+!src/test/resources/*.xml
+!.github/workflows/*.yml
 
 # OS
 .DS_Store

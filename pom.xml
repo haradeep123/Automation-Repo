@@ -148,6 +148,8 @@
                                 <headless>${headless}</headless>
                             </systemPropertyVariables>
                             <testFailureIgnore>true</testFailureIgnore>
+                            <useManifestOnlyJar>false</useManifestOnlyJar>
+                            <useSystemClassLoader>false</useSystemClassLoader>
                             <includes>
                                 <include>**/*E2ETest*.java</include>
                             </includes>
