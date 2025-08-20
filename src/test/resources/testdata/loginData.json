@@ -1,0 +1,56 @@
+{
+  "validUsers": [
+    {
+      "username": "testuser@example.com",
+      "password": "password123",
+      "expectedResult": "success",
+      "description": "Valid user credentials"
+    },
+    {
+      "username": "admin@example.com",
+      "password": "admin123",
+      "expectedResult": "success",
+      "description": "Admin user credentials"
+    }
+  ],
+  "invalidUsers": [
+    {
+      "username": "invalid@example.com",
+      "password": "wrongpassword",
+      "expectedResult": "failure",
+      "description": "Invalid credentials"
+    },
+    {
+      "username": "testuser@example.com",
+      "password": "wrongpassword",
+      "expectedResult": "failure",
+      "description": "Valid username, invalid password"
+    },
+    {
+      "username": "invalid@example.com",
+      "password": "password123",
+      "expectedResult": "failure",
+      "description": "Invalid username, valid password"
+    }
+  ],
+  "edgeCases": [
+    {
+      "username": "",
+      "password": "",
+      "expectedResult": "failure",
+      "description": "Empty credentials"
+    },
+    {
+      "username": "testuser@example.com",
+      "password": "",
+      "expectedResult": "failure",
+      "description": "Empty password"
+    },
+    {
+      "username": "",
+      "password": "password123",
+      "expectedResult": "failure",
+      "description": "Empty username"
+    }
+  ]
+}

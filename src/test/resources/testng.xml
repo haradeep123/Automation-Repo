@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="AutomationTestSuite" verbose="1">
+    
+    <!-- Suite level parameters -->
+    <parameter name="browser" value="chrome"/>
+    <parameter name="environment" value="QA"/>
+    
+    <!-- Listeners for reporting and other functionalities -->
+    <listeners>
+        <listener class-name="org.testng.reporters.EmailableReporter"/>
+    </listeners>
+    
+    <!-- Smoke Test Suite -->
+    <test name="SmokeTests" preserve-order="true">
+        <groups>
+            <run>
+                <include name="smoke"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.automation.tests.LoginTest">
+                <methods>
+                    <include name="testValidLogin"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+    <!-- Regression Test Suite -->
+    <test name="RegressionTests" preserve-order="true">
+        <groups>
+            <run>
+                <include name="regression"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.automation.tests.LoginTest"/>
+        </classes>
+    </test>
+    
+    <!-- Login Tests Only -->
+    <test name="LoginTests" preserve-order="true">
+        <classes>
+            <class name="com.automation.tests.LoginTest"/>
+        </classes>
+    </test>
+    
+    <!-- Parallel Test Execution Example -->
+    <test name="ParallelTests" parallel="methods" thread-count="3">
+        <classes>
+            <class name="com.automation.tests.LoginTest">
+                <methods>
+                    <include name="testValidLogin"/>
+                    <include name="testInvalidLogin"/>
+                    <include name="testEmptyCredentials"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+    
+</suite>

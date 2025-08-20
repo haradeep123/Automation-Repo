@@ -1,0 +1,102 @@
+name: SpiceJet E2E Tests
+
+# Trigger the workflow on push to main branch and pull requests
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Checkout the repository code
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    # Set up Java 11
+    - name: Set up JDK 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        
+    # Cache Maven dependencies for faster builds
+    - name: Cache Maven Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
+    # Install Chrome browser for headless testing
+    - name: Setup Chrome
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: stable
+        
+    # Install ChromeDriver
+    - name: Setup ChromeDriver
+      uses: nanasess/setup-chromedriver@v2
+      
+    # Verify Java and Maven installation
+    - name: Verify Setup
+      run: |
+        java -version
+        mvn -version
+        google-chrome --version
+        chromedriver --version
+        
+    # Compile the project
+    - name: Compile Project
+      run: mvn clean compile
+      
+    # Run E2E tests using CI profile
+    - name: Run SpiceJet E2E Tests
+      run: |
+        mvn test -Pci \
+                 -Dmaven.test.failure.ignore=true
+      
+    # Upload test reports as artifacts
+    - name: Upload Test Reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-reports
+        path: |
+          target/surefire-reports/
+          test-output/
+          reports/
+        retention-days: 30
+        
+    # Upload ExtentReports if they exist
+    - name: Upload ExtentReports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: extent-reports
+        path: |
+          reports/
+          test-output/
+        retention-days: 30
+        
+    # Generate Test Summary
+    - name: Test Summary
+      uses: test-summary/action@v2
+      if: always()
+      with:
+        paths: "target/surefire-reports/TEST-*.xml"
+        
+    # Comment PR with test results (for PRs only)
+    - name: Comment Test Results
+      if: github.event_name == 'pull_request'
+      uses: dorny/test-reporter@v1
+      with:
+        name: E2E Test Results
+        path: 'target/surefire-reports/TEST-*.xml'
+        reporter: java-junit
+        fail-on-error: true
